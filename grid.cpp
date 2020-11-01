@@ -33,3 +33,8 @@ void Grid::printGrid()
         str.clear();
     }
 }
+
+int Grid::size()
+{
+    return pos.size();
+}

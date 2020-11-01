@@ -6,7 +6,9 @@
 class Human : public Player
 {
 public:
-    Human(int color, Grid &posMat);
+    Human(int color);
+    void move(int row, int col);
+    QString getType();
 };
 
 #endif // HUMAN_H

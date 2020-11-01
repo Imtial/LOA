@@ -16,6 +16,7 @@ public:
     void set(int r, int c, int val);
     int get(int r, int c);
     void printGrid();
+    int size();
 };
 
 #endif // GRID_H

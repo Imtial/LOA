@@ -18,6 +18,7 @@ SOURCES += \
     board.cpp \
     bsquare.cpp \
     cell.cpp \
+    controller.cpp \
     grid.cpp \
     human.cpp \
     main.cpp \
@@ -33,6 +34,7 @@ HEADERS += \
     bsquare.h \
     cell.h \
     constants.h \
+    controller.h \
     grid.h \
     human.h \
     mainwindow.h \

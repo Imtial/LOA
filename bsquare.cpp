@@ -1,8 +1,8 @@
 #include "bsquare.h"
-#include "board.h"
+#include "controller.h"
 #include <QGraphicsSceneMouseEvent>
 
-BSquare::BSquare(int row, int col, Board * b)
+BSquare::BSquare(int row, int col, Controller * con)
     : QGraphicsRectItem((row+1)*DL, (col+1)*DL, DL, DL)
 {
     setFlags(ItemIsSelectable);
@@ -14,8 +14,9 @@ BSquare::BSquare(int row, int col, Board * b)
     {
         brush = new QBrush(LIGHTFILL);
     }
+    this->circle = NULL;
     this->setBrush(*brush);
-    this->board = b;
+    this->controller = con;
 }
 
 bool BSquare::addCircle(BCircle *circle)
@@ -25,9 +26,10 @@ bool BSquare::addCircle(BCircle *circle)
     return true;
 }
 
-void BSquare::highlight()
+void BSquare::highlight(bool hl)
 {
-    this->setBrush(QBrush(HIGHLIGHT));
+    if(hl) this->setBrush(QBrush(HIGHLIGHT));
+    else this->setBrush(QBrush(SELECTION));
 }
 
 void BSquare::clearHighlight()
@@ -45,7 +47,7 @@ void BSquare::mouseReleaseEvent(QGraphicsSceneMouseEvent *event)
     if (event->button() == Qt::LeftButton)
     {
 //        qDebug() << event->pos().x() << ", " << event->pos().y() << "\n";
-        board->processClickEvent(event->pos().x(), event->pos().y());
+        controller->processClickEvent(event->pos().x(), event->pos().y());
     }
     else QGraphicsRectItem::mouseReleaseEvent(event);
 }

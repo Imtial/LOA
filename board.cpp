@@ -1,10 +1,22 @@
 #include "board.h"
+#include <QGraphicsScene>
+#include <QGraphicsView>
+#include <QGraphicsLineItem>
+#include <vector>
+#include "bsquare.h"
+#include "bmark.h"
+#include "bcircle.h"
 #include "cell.h"
+#include "human.h"
+#include "ai.h"
+#include "controller.h"
 
-Board::Board(QGraphicsScene &scene, int size)
+Board::Board(QGraphicsScene &scene, Controller * con, int size)
     : size(size), nPieces((size - 2)*2), scene(scene),
       posMat(size), moveMat(size, VB(size, 0)), turn(W)
 {
+    this->con = con;
+
     int outerSize = size + 2;
 
     squares = new BSquare ** [outerSize];
@@ -15,7 +27,7 @@ Board::Board(QGraphicsScene &scene, int size)
 
         for (int c = 0; c < size; c++)
         {
-            squares[r][c] = new BSquare(r, c, this);
+            squares[r][c] = new BSquare(r, c, con);
             scene.addItem(squares[r][c]);
         }
     }
@@ -85,34 +97,44 @@ void Board::movePiece(int row, int col)
 
 void Board::selectPiece(int row, int col)
 {
-    clearHlOptions();
     moveMat.assign(size, VB(size, 0));
     selPiece = squares[row][col]->getCircle();
     generateMoveMat(posMat.get(row, col), row, col);
-    hlOptions();
 }
 
-bool Board::processClickEvent(int x, int y)
+bool Board::processClickEvent(int row, int col)
 {
-    int r, c;
-    r = y / DL;
-    c = x / DL;
-    if (posMat.get(r-1, c-1) == turn)
+    qDebug() << row+1 << ", " << col+1;
+    if (posMat.get(row, col) == turn)
     {
-        selectPiece(r-1, c-1);
+        clearHlOptions();
+        selectPiece(row, col);
+        hlSelection(row, col);
+        hlOptions();
 //        printMatrix(true);
     }
     else
     {
-        if (selPiece != NULL && moveMat[r-1][c-1])
+        if (selPiece != NULL && moveMat[row][col])
         {
-            movePiece(r-1, c-1);
+            clearHlSelection(selPiece->getRow(), selPiece->getCol());
+            movePiece(row, col);
             clearHlOptions();
-            turn = ALT(turn);
+            turn = con->altTurn();
         }
     }
-    qDebug() << r << ", " << c;
+
     return true;
+}
+
+Grid *Board::getPositionMatrix()
+{
+    return &posMat;
+}
+
+bool Board::isMoveAvailable(int row, int col)
+{
+    return moveMat[row][col];
 }
 
 bool Board::isMoveValid(int piece, const Cell &c1, const Cell &c2)
@@ -244,6 +266,16 @@ void Board::hlOptions()
             if (moveMat[r][c]) squares[c][r]->highlight();
         }
     }
+}
+
+void Board::hlSelection(int row, int col)
+{
+    squares[col][row]->highlight(0);
+}
+
+void Board::clearHlSelection(int row, int col)
+{
+    squares[col][row]->clearHighlight();
 }
 
 void Board::clearHlOptions()
