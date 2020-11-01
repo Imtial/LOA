@@ -1,4 +1,5 @@
 #include "board.h"
+#include "cell.h"
 
 Board::Board(QGraphicsScene &scene, int size)
     : size(size), nPieces((size - 2)*2), scene(scene),
@@ -114,57 +115,57 @@ bool Board::processClickEvent(int x, int y)
     return true;
 }
 
-bool Board::isMoveValid(int piece, int r1, int c1, int r2, int c2)
+bool Board::isMoveValid(int piece, const Cell &c1, const Cell &c2)
 {
     int self = piece;
     int op = ALT(piece);
 
-    if (posMat.get(r2, c2) == self) return false;
+    if (posMat.get(c2.r, c2.c) == self) return false;
 
-    if (r1 == r2)
+    if (c1.r == c2.r)
     {
-        if (c1 < c2)
+        if (c1.c < c2.c)
         {
-            for (int i = c1+1; i < c2; i++)
-                if (posMat.get(r1, i) == op) return false;
+            for (int i = c1.c+1; i < c2.c; i++)
+                if (posMat.get(c1.r, i) == op) return false;
         }
         else
         {
-            for (int i = c1-1; i > c2; i--)
-                if (posMat.get(r1, i) == op) return false;
+            for (int i = c1.c-1; i > c2.c; i--)
+                if (posMat.get(c1.r, i) == op) return false;
         }
     }
-    else if (c1 == c2)
+    else if (c1.c == c2.c)
     {
-        if (r1 < r2)
+        if (c1.r < c2.r)
         {
-            for (int i = r1+1; i < r2; i++)
-                if (posMat.get(i, c1) == op) return false;
+            for (int i = c1.r+1; i < c2.r; i++)
+                if (posMat.get(i, c1.c) == op) return false;
         }
         else
         {
-            for (int i = r1-1; i > r2; i--)
-                if (posMat.get(i, c1) == op) return false;
+            for (int i = c1.r-1; i > c2.r; i--)
+                if (posMat.get(i, c1.c) == op) return false;
         }
     }
-    else if (r1 > r2 && c1 < c2)
+    else if (c1.r > c2.r && c1.c < c2.c)
     {
-        for (int i = r1-1, j = c1+1; i > r2 && j < c2; i--, j++)
+        for (int i = c1.r-1, j = c1.c+1; i > c2.r && j < c2.c; i--, j++)
             if (posMat.get(i, j) == op) return false;
     }
-    else if (r1 < r2 && c1 > c2)
+    else if (c1.r < c2.r && c1.c > c2.c)
     {
-        for (int i = r1+1, j = c1-1; i < r2 && j > c2; i++, j--)
+        for (int i = c1.r+1, j = c1.c-1; i < c2.r && j > c2.c; i++, j--)
             if (posMat.get(i, j) == op) return false;
     }
-    else if (r1 > r2 && c1 > c2)
+    else if (c1.r > c2.r && c1.c > c2.c)
     {
-        for (int i = r1-1, j = c1-1; i > r2 && j > c2; i--, j--)
+        for (int i = c1.r-1, j = c1.c-1; i > c2.r && j > c2.c; i--, j--)
             if (posMat.get(i, j) == op) return false;
     }
-    else if (r1 < r2 && c1 < c2)
+    else if (c1.r < c2.r && c1.c < c2.c)
     {
-        for (int i = r1+1, j = c1+1; i < r2 && j < c2; i++, j++)
+        for (int i = c1.r+1, j = c1.c+1; i < c2.r && j < c2.c; i++, j++)
             if (posMat.get(i, j) == op) return false;
     }
     return true;
@@ -207,28 +208,30 @@ void Board::generateMoveMat(int piece, int row, int col)
 //    qDebug() << "(prow=" << prow << ", pcol" << pcol << "), (nrow=" << nrow << ", ncol=" << ncol << ")";
 //    qDebug() << "#row=" << rc << ", #col=" << cc << ", #+diag=" << pdc << ", #-diag=" << ndc;
 
-    if (col + rc < size && isMoveValid(piece, row, col, row, col+rc))
+    Cell curCell(row, col);
+
+    if (col + rc < size && isMoveValid(piece, curCell, Cell(row, col+rc)))
         moveMat[row][col + rc] = true;
 
-    if (col - rc >= 0 && isMoveValid(piece, row, col, row, col-rc))
+    if (col - rc >= 0 && isMoveValid(piece, curCell, Cell(row, col-rc)))
         moveMat[row][col - rc] = true;
 
-    if (row + cc < size && isMoveValid(piece, row, col, row+cc, col))
+    if (row + cc < size && isMoveValid(piece, curCell, Cell(row+cc, col)))
         moveMat[row + cc][col] = true;
 
-    if (row - cc >= 0 && isMoveValid(piece, row, col, row-cc, col))
+    if (row - cc >= 0 && isMoveValid(piece, curCell, Cell(row-cc, col)))
         moveMat[row - cc][col] = true;
 
-    if (row + pdc < size && col - pdc >= 0 && isMoveValid(piece, row, col, row+pdc, col-pdc))
+    if (row + pdc < size && col - pdc >= 0 && isMoveValid(piece, curCell, Cell(row+pdc, col-pdc)))
         moveMat[row + pdc][col - pdc] = true;
 
-    if (row - pdc >= 0 && col + pdc < size && isMoveValid(piece, row, col, row-pdc, col+pdc))
+    if (row - pdc >= 0 && col + pdc < size && isMoveValid(piece, curCell, Cell(row-pdc, col+pdc)))
         moveMat[row - pdc][col + pdc] = true;
 
-    if (row + ndc < size && col + ndc < size && isMoveValid(piece, row, col, row+ndc, col+ndc))
+    if (row + ndc < size && col + ndc < size && isMoveValid(piece, curCell, Cell(row+ndc, col+ndc)))
         moveMat[row + ndc][col + ndc] = true;
 
-    if (row - ndc >= 0 && col - ndc >= 0 && isMoveValid(piece, row, col, row-ndc, col-ndc))
+    if (row - ndc >= 0 && col - ndc >= 0 && isMoveValid(piece, curCell, Cell(row-ndc, col-ndc)))
         moveMat[row - ndc][col - ndc] = true;
 }
 

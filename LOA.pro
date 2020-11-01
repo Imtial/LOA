@@ -17,6 +17,7 @@ SOURCES += \
     bmark.cpp \
     board.cpp \
     bsquare.cpp \
+    cell.cpp \
     grid.cpp \
     human.cpp \
     main.cpp \
@@ -30,6 +31,7 @@ HEADERS += \
     bmark.h \
     board.h \
     bsquare.h \
+    cell.h \
     constants.h \
     grid.h \
     human.h \

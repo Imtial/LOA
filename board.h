@@ -11,6 +11,7 @@
 #include "bcircle.h"
 #include "grid.h"
 
+class Cell;
 class Board
 {
     int size;
@@ -25,7 +26,7 @@ class Board
     VVB moveMat;
     BCircle * selPiece;
     int turn;
-    bool isMoveValid(int piece, int r1, int c1, int r2, int c2);
+    bool isMoveValid(int piece, const Cell &c1, const Cell &c2);
     void hlOptions();
     void clearHlOptions();
     void printMatrix(bool printMove = false);
