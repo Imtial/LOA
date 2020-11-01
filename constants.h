@@ -5,6 +5,11 @@
 #include <QBrush>
 #include <QDebug>
 
+
+#define W   1
+#define B   -1
+#define ALT(p) -p
+
 // Number of Rows & Columns
 #define SIZE 6
 // width & height of each square block

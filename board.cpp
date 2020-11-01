@@ -2,7 +2,7 @@
 
 Board::Board(QGraphicsScene &scene, int size)
     : size(size), nPieces((size - 2)*2), scene(scene),
-      posMat(size, VI(size, 0)), moveMat(size, VB(size, 0)), turn(W)
+      posMat(size), moveMat(size, VB(size, 0)), turn(W)
 {
     int outerSize = size + 2;
 
@@ -47,7 +47,8 @@ Board::Board(QGraphicsScene &scene, int size)
         squares[i+1][size-1]->addCircle(b2);
 //        qDebug() << i+1 << ", " << size-1<< " | " << squares[i+1][size-1]->getCircle()->getRow() << ", " << squares[i+1][size-1]->getCircle()->getCol();
 
-        posMat[i+1][0] = posMat[i+1][size-1] = B;
+        posMat.set(i+1, 0, B);
+        posMat.set(i+1, size-1, B);
 
         BCircle * w1 = new BCircle(0, i+1, true);
         scene.addItem(w1);
@@ -59,24 +60,15 @@ Board::Board(QGraphicsScene &scene, int size)
         squares[size-1][i+1]->addCircle(w2);
 //        qDebug() << size-1 << ", " << i+1 << " | " << squares[size-1][i+1]->getCircle()->getRow() << ", " << squares[size-1][i+1]->getCircle()->getCol();
 
-        posMat[0][i+1] = posMat[size-1][i+1] = W;
+        posMat.set(0, i+1, W);
+        posMat.set(size-1, i+1, W);
     }
-
-//    printMatrix();
-//    for (int r = 0; r < size; r++)
-//    {
-//        for (int c = 0; c < size; c++)
-//        {
-//            if (squares[r][c]->getCircle() != NULL)
-//                qDebug() << r << ", " << c << " | " << squares[r][c]->getCircle()->getRow() << ", " << squares[r][c]->getCircle()->getCol();
-//        }
-    //    }
 }
 
 void Board::movePiece(int row, int col)
 {
-    posMat[row][col] = posMat[selPiece->getRow()][selPiece->getCol()];
-    posMat[selPiece->getRow()][selPiece->getCol()] = 0;
+    posMat.set(row, col, posMat.get(selPiece->getRow(), selPiece->getCol()));
+    posMat.set(selPiece->getRow(), selPiece->getCol(), 0);
     squares[selPiece->getRow()][selPiece->getCol()]->addCircle(NULL);
     selPiece->setPos(row, col);
     BCircle * existing = squares[row][col]->getCircle();
@@ -95,7 +87,7 @@ void Board::selectPiece(int row, int col)
     clearHlOptions();
     moveMat.assign(size, VB(size, 0));
     selPiece = squares[row][col]->getCircle();
-    generateMoveMat(posMat[row][col], row, col);
+    generateMoveMat(posMat.get(row, col), row, col);
     hlOptions();
 }
 
@@ -104,7 +96,7 @@ bool Board::processClickEvent(int x, int y)
     int r, c;
     r = y / DL;
     c = x / DL;
-    if (posMat[r-1][c-1] == turn)
+    if (posMat.get(r-1, c-1) == turn)
     {
         selectPiece(r-1, c-1);
 //        printMatrix(true);
@@ -127,19 +119,19 @@ bool Board::isMoveValid(int piece, int r1, int c1, int r2, int c2)
     int self = piece;
     int op = ALT(piece);
 
-    if (posMat[r2][c2] == self) return false;
+    if (posMat.get(r2, c2) == self) return false;
 
     if (r1 == r2)
     {
         if (c1 < c2)
         {
             for (int i = c1+1; i < c2; i++)
-                if (posMat[r1][i] == op) return false;
+                if (posMat.get(r1, i) == op) return false;
         }
         else
         {
             for (int i = c1-1; i > c2; i--)
-                if (posMat[r1][i] == op) return false;
+                if (posMat.get(r1, i) == op) return false;
         }
     }
     else if (c1 == c2)
@@ -147,33 +139,33 @@ bool Board::isMoveValid(int piece, int r1, int c1, int r2, int c2)
         if (r1 < r2)
         {
             for (int i = r1+1; i < r2; i++)
-                if (posMat[i][c1] == op) return false;
+                if (posMat.get(i, c1) == op) return false;
         }
         else
         {
             for (int i = r1-1; i > r2; i--)
-                if (posMat[i][c1] == op) return false;
+                if (posMat.get(i, c1) == op) return false;
         }
     }
     else if (r1 > r2 && c1 < c2)
     {
         for (int i = r1-1, j = c1+1; i > r2 && j < c2; i--, j++)
-            if (posMat[i][j] == op) return false;
+            if (posMat.get(i, j) == op) return false;
     }
     else if (r1 < r2 && c1 > c2)
     {
         for (int i = r1+1, j = c1-1; i < r2 && j > c2; i++, j--)
-            if (posMat[i][j] == op) return false;
+            if (posMat.get(i, j) == op) return false;
     }
     else if (r1 > r2 && c1 > c2)
     {
         for (int i = r1-1, j = c1-1; i > r2 && j > c2; i--, j--)
-            if (posMat[i][j] == op) return false;
+            if (posMat.get(i, j) == op) return false;
     }
     else if (r1 < r2 && c1 < c2)
     {
         for (int i = r1+1, j = c1+1; i < r2 && j < c2; i++, j++)
-            if (posMat[i][j] == op) return false;
+            if (posMat.get(i, j) == op) return false;
     }
     return true;
 }
@@ -207,10 +199,10 @@ void Board::generateMoveMat(int piece, int row, int col)
 
     for (int i = 0; i < size; i++)
     {
-        if (posMat[row][i]) rc++;
-        if (posMat[i][col]) cc++;
-        if (prow + i < size && pcol - i >= 0 && posMat[prow + i][pcol - i]) pdc++;
-        if (nrow + i < size && ncol + i < size && posMat[nrow + i][ncol + i]) ndc++;
+        if (posMat.get(row, i)) rc++;
+        if (posMat.get(i, col)) cc++;
+        if (prow + i < size && pcol - i >= 0 && posMat.get(prow + i, pcol - i)) pdc++;
+        if (nrow + i < size && ncol + i < size && posMat.get(nrow + i, ncol + i)) ndc++;
     }
 //    qDebug() << "(prow=" << prow << ", pcol" << pcol << "), (nrow=" << nrow << ", ncol=" << ncol << ")";
 //    qDebug() << "#row=" << rc << ", #col=" << cc << ", #+diag=" << pdc << ", #-diag=" << ndc;
@@ -267,15 +259,7 @@ void Board::printMatrix(bool printMove)
     QString str = "";
     if (!printMove)
     {
-        for (VI &row : posMat)
-        {
-            for(int &val : row)
-            {
-                str += QString::number(val) + " ";
-            }
-            qDebug() << str;
-            str.clear();
-        }
+        posMat.printGrid();
     }
     else
     {

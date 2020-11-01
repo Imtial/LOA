@@ -1,5 +1,6 @@
 #include "bsquare.h"
 #include "board.h"
+#include <QGraphicsSceneMouseEvent>
 
 BSquare::BSquare(int row, int col, Board * b)
     : QGraphicsRectItem((row+1)*DL, (col+1)*DL, DL, DL)

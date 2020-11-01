@@ -9,15 +9,7 @@
 #include "bsquare.h"
 #include "bmark.h"
 #include "bcircle.h"
-
-typedef std::vector<int> VI;
-typedef std::vector<std::vector<int>> VVI;
-typedef std::vector<bool> VB;
-typedef std::vector<std::vector<bool>> VVB;
-
-#define W   1
-#define B   -1
-#define ALT(p) -p
+#include "grid.h"
 
 class Board
 {
@@ -29,17 +21,17 @@ class Board
     BMark ** fcLabels;
     BMark ** lcLabels;
     BSquare *** squares;
-    VVI posMat;
+    Grid posMat;
     VVB moveMat;
     BCircle * selPiece;
     int turn;
     bool isMoveValid(int piece, int r1, int c1, int r2, int c2);
     void hlOptions();
     void clearHlOptions();
-    void generateMoveMat(int piece, int row, int col);
     void printMatrix(bool printMove = false);
 public:
     Board(QGraphicsScene &scene, int size = SIZE);
+    void generateMoveMat(int piece, int row, int col);
     void movePiece(int row, int col);
     void selectPiece(int row, int col);
     bool processClickEvent(int x, int y);

@@ -3,13 +3,13 @@
 
 #include "constants.h"
 #include <QGraphicsRectItem>
-#include <QGraphicsSceneMouseEvent>
 
 #define DARKFILL    QColor(222, 170, 135)
 #define LIGHTFILL   QColor(255, 221, 85)
 #define HIGHLIGHT   QColor(72, 201, 176)
 
 class Board;
+class QGraphicsSceneMouseEvent;
 class BCircle;
 
 class BSquare : public QGraphicsRectItem

@@ -1,6 +1,6 @@
 #include "human.h"
 
-Human::Human()
+Human::Human(int color, Grid &posMat) : Player(color, posMat)
 {
 
 }
