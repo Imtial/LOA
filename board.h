@@ -14,6 +14,7 @@ class BMark;
 class Cell;
 class Player;
 class Controller;
+class BoardState;
 
 class Board
 {
@@ -37,6 +38,7 @@ class Board
     void clearHlOptions();
     void printMatrix(bool printMove = false);
 public:
+    BoardState * state;
     Board(QGraphicsScene &scene, Controller * con, int size = SIZE);
     void generateMoveMat(int piece, int row, int col);
     void movePiece(int row, int col);

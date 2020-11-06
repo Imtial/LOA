@@ -1,7 +1,8 @@
 #include "controller.h"
 #include "player.h"
+#include <QMutexLocker>
 
-Controller::Controller(Player * p1, Player * p2) : turn(W)
+Controller::Controller(Player * p1, Player * p2) : turn(W), gameOver(false)
 {
     this->p1 = p1;
     this->p2 = p2;
@@ -23,6 +24,7 @@ void Controller::start()
 
 void Controller::processClickEvent(int x, int y)
 {
+    if (gameOver) return;
     int r, c;
     r = y / DL;
     c = x / DL;
@@ -51,6 +53,7 @@ void Controller::requestMove()
 
 int Controller::altTurn()
 {
+    QMutexLocker locker(&mutex);
     turn = ALT(turn);
     return turn;
 }

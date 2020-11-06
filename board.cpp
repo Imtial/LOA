@@ -10,6 +10,7 @@
 #include "human.h"
 #include "ai.h"
 #include "controller.h"
+#include "boardstate.h"
 
 Board::Board(QGraphicsScene &scene, Controller * con, int size)
     : size(size), nPieces((size - 2)*2), scene(scene),
@@ -76,6 +77,8 @@ Board::Board(QGraphicsScene &scene, Controller * con, int size)
         posMat.set(0, i+1, W);
         posMat.set(size-1, i+1, W);
     }
+
+    this->state = new BoardState(posMat);
 }
 
 void Board::movePiece(int row, int col)
@@ -104,7 +107,7 @@ void Board::selectPiece(int row, int col)
 
 bool Board::processClickEvent(int row, int col)
 {
-    qDebug() << row+1 << ", " << col+1;
+//    qDebug() << row+1 << ", " << col+1;
     if (posMat.get(row, col) == turn)
     {
         clearHlOptions();
@@ -117,10 +120,20 @@ bool Board::processClickEvent(int row, int col)
     {
         if (selPiece != NULL && moveMat[row][col])
         {
-            clearHlSelection(selPiece->getRow(), selPiece->getCol());
+            Cell cur(selPiece->getRow(), selPiece->getCol());
+            Cell target(row, col);
+            int selectedPieceCol = posMat.get(cur);
+            int targetPieceCol = posMat.get(target);
+
+            clearHlSelection(cur.r, cur.c);
             movePiece(row, col);
             clearHlOptions();
             turn = con->altTurn();
+
+            state->update(cur, selectedPieceCol, target, targetPieceCol);
+//            state->print();
+            if (state->euler(selectedPieceCol) <= 1 && state->terminal(selectedPieceCol, row, col))
+                con->gameOver = true;
         }
     }
 
@@ -284,7 +297,8 @@ void Board::clearHlOptions()
     {
         for (int c = 0; c < size; c++)
         {
-            if (moveMat[r][c]) squares[c][r]->clearHighlight();
+//            if (moveMat[r][c])
+                squares[c][r]->clearHighlight();
         }
     }
 }

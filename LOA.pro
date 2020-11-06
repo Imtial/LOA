@@ -16,6 +16,7 @@ SOURCES += \
     bcircle.cpp \
     bmark.cpp \
     board.cpp \
+    boardstate.cpp \
     bsquare.cpp \
     cell.cpp \
     controller.cpp \
@@ -24,13 +25,15 @@ SOURCES += \
     main.cpp \
     mainwindow.cpp \
     movearrow.cpp \
-    player.cpp
+    player.cpp \
+    simulator.cpp
 
 HEADERS += \
     ai.h \
     bcircle.h \
     bmark.h \
     board.h \
+    boardstate.h \
     bsquare.h \
     cell.h \
     constants.h \
@@ -39,7 +42,8 @@ HEADERS += \
     human.h \
     mainwindow.h \
     movearrow.h \
-    player.h
+    player.h \
+    simulator.h
 
 FORMS += \
     mainwindow.ui

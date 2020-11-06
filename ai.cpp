@@ -1,10 +1,9 @@
 #include "ai.h"
 #include <ctime>
 #include <vector>
-#include <QEventLoop>
-#include <QTimer>
 #include "board.h"
 #include "cell.h"
+#include "simulator.h"
 
 typedef std::vector<Cell> VC;
 
@@ -15,27 +14,15 @@ AI::AI(int color) : Player(color)
 
 void AI::move(int row, int col)
 {
-    int size = posMat->size();
-    VC pos;
-    for (int r = 0; r < size; r++)
-        for (int c = 0; c < size; c++)
-            if (posMat->get(r, c) == getColor()) pos.push_back(Cell(r,c));
-    Cell &selected = pos[rand() % pos.size()];
-    board->processClickEvent(selected.r, selected.c);
+    Simulator * sim = new Simulator(*board->state, getColor());
+    connect(sim, SIGNAL(squareSelected(int, int)), this, SLOT(onSquareSelected(int, int)));
+    connect(sim, SIGNAL(finished()), sim, SLOT(deleteLater()));
+    sim->start();
+}
 
-    QEventLoop loop;
-    QTimer t;
-    t.connect(&t, &QTimer::timeout, &loop, &QEventLoop::quit);
-    t.start(1000);
-    loop.exec();
-
-    pos.clear();
-    board->generateMoveMat(getColor(), selected.r, selected.c);
-    for (int r = 0; r < size; r++)
-        for (int c = 0; c < size; c++)
-            if (board->isMoveAvailable(r, c)) pos.push_back(Cell(r,c));
-    selected = pos[rand() % pos.size()];
-    board->processClickEvent(selected.r, selected.c);
+void AI::onSquareSelected(int row, int col)
+{
+    board->processClickEvent(row, col);
 }
 
 QString AI::getType()
