@@ -23,11 +23,9 @@ int main(int argc, char *argv[])
     Board board = Board(*scene, controller);
     p1->setBoard(&board);
     p2->setBoard(&board);
-//    QGraphicsView view(scene);
-//    view.setRenderHints(QPainter::Antialiasing);
+    w.setController(controller);
     w.show();
 
     if (p1->getType() == _AI_) controller->start();
-//    view.show();
     return a.exec();
 }

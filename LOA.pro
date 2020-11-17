@@ -24,7 +24,6 @@ SOURCES += \
     human.cpp \
     main.cpp \
     mainwindow.cpp \
-    movearrow.cpp \
     player.cpp \
     simulator.cpp
 
@@ -41,7 +40,6 @@ HEADERS += \
     grid.h \
     human.h \
     mainwindow.h \
-    movearrow.h \
     player.h \
     simulator.h
 

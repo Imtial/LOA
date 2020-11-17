@@ -39,7 +39,11 @@ void Grid::printGrid()
     for (int r = 0; r < size; r++)
     {
         for (int c = 0; c < size; c++)
-            str += QString::number(get(r, c)) + " ";
+        {
+            if (get(r, c) == W) str += "W ";
+            else if (get(r, c) == B) str += "B ";
+            else str += "0 ";
+        }
         qDebug() << str;
         str.clear();
     }

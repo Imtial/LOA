@@ -22,6 +22,7 @@ void AI::move(int row, int col)
 
 void AI::onSquareSelected(int row, int col)
 {
+//    qDebug() << "SIGNAL RECIEVED";
     board->processClickEvent(row, col);
 }
 

@@ -128,12 +128,23 @@ bool Board::processClickEvent(int row, int col)
             clearHlSelection(cur.r, cur.c);
             movePiece(row, col);
             clearHlOptions();
-            turn = con->altTurn();
 
             state->update(cur, selectedPieceCol, target, targetPieceCol);
-//            state->print();
-            if (state->euler(selectedPieceCol) <= 1 && state->terminal(selectedPieceCol, row, col))
-                con->gameOver = true;
+            state->print();
+            qDebug() << "SCORE=" << state->getScore(turn);
+            bool wWin = state->euler(W) <= 1.5 && state->terminal(W, state->getWhitePositions().back().r, state->getWhitePositions().back().c);
+            bool bWin = state->euler(B) <= 1.5 && state->terminal(B, state->getBlackPositions().back().r, state->getBlackPositions().back().c);
+            if (wWin && bWin)
+            {
+                if (turn == W) con->end(QString("White"));
+                else if (turn == B) con->end(QString("Black"));
+            }
+            else if (wWin)
+                con->end(QString("White"));
+            else if (bWin)
+                con->end(QString("Black"));
+            else
+                turn = con->altTurn();
         }
     }
 

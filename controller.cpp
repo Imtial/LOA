@@ -16,10 +16,15 @@ void Controller::start()
         if (p2->getType() == _AI_)
         {
             processClickEvent(0, 0);
-            int T = 50;
-            while (T--) requestMove();
+            while (!gameOver) requestMove();
         }
     }
+}
+
+void Controller::end(QString winner)
+{
+    gameOver = true;
+    emit foundWinner(winner);
 }
 
 void Controller::processClickEvent(int x, int y)

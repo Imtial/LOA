@@ -7,7 +7,7 @@
 
 typedef std::vector<int8_t> VI;
 typedef std::vector<VI> VVI;
-typedef std::list<Cell> LC;
+typedef std::vector<Cell> VC;
 
 class Grid;
 class BoardState
@@ -20,18 +20,21 @@ private:
     Cell wCom, bCom;
     int8_t wCount, bCount;
     float wE, bE;
-    LC wPieces, bPieces;
-    int wAvgDist, bAvgDist;
+    VC wPieces, bPieces;
+    float wAvgDist, bAvgDist;
     int8_t wCen, bCen;
     int8_t wEdge, bEdge;
+    int8_t wq3q4, bq3q4;
     int quadType(int r, int c, int color);
     float cellScore(int r, int c, int color);
-    float updateQuadScore(int r, int c, int color);
+    float updateQuads(int r, int c, int color);
     void updateCOM(Cell &init, int initCol, Cell &target, int tarCol);
     void recalculateDistMetrics();
-    int getCenScoreChange(Cell &init, int initCol, Cell &target, int tarCol);
-    int getCellDist(Cell &c1, Cell &c2);
+    void getCenScoreChange(Cell &init, int initCol, Cell &target, int tarCol);
+    float getCellDist(Cell &c1, Cell &c2);
     bool isEdge(Cell &cell, int d);
+    int getPieceSquareValue(int color);
+    int getMinArea(int color);
 public:
     BoardState(Grid &posMat);
     ~BoardState();
@@ -43,6 +46,9 @@ public:
     float euler(int color);
     void print();
     Grid& getGrid();
+    VC& getWhitePositions();
+    VC& getBlackPositions();
+    float getScore(int color);
 };
 
 #endif // BOARDSTATE_H

@@ -6,12 +6,12 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>1126</width>
-    <height>814</height>
+    <width>1296</width>
+    <height>1070</height>
    </rect>
   </property>
   <property name="windowTitle">
-   <string>MainWindow</string>
+   <string>Line of Action</string>
   </property>
   <widget class="QWidget" name="centralwidget">
    <widget class="QGraphicsView" name="graphicsView">
@@ -19,16 +19,25 @@
      <rect>
       <x>10</x>
       <y>10</y>
-      <width>891</width>
-      <height>761</height>
+      <width>1024</width>
+      <height>1024</height>
      </rect>
+    </property>
+    <property name="sizePolicy">
+     <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
+      <horstretch>0</horstretch>
+      <verstretch>0</verstretch>
+     </sizepolicy>
+    </property>
+    <property name="resizeAnchor">
+     <enum>QGraphicsView::NoAnchor</enum>
     </property>
    </widget>
    <widget class="QWidget" name="layoutWidget">
     <property name="geometry">
      <rect>
-      <x>950</x>
-      <y>20</y>
+      <x>1100</x>
+      <y>240</y>
       <width>140</width>
       <height>39</height>
      </rect>
@@ -132,13 +141,41 @@
      </item>
     </layout>
    </widget>
+   <widget class="QLabel" name="winner">
+    <property name="enabled">
+     <bool>true</bool>
+    </property>
+    <property name="geometry">
+     <rect>
+      <x>1060</x>
+      <y>300</y>
+      <width>211</width>
+      <height>81</height>
+     </rect>
+    </property>
+    <property name="font">
+     <font>
+      <family>Roboto Medium</family>
+      <pointsize>26</pointsize>
+     </font>
+    </property>
+    <property name="autoFillBackground">
+     <bool>false</bool>
+    </property>
+    <property name="text">
+     <string>Omuk Wins</string>
+    </property>
+    <property name="alignment">
+     <set>Qt::AlignCenter</set>
+    </property>
+   </widget>
   </widget>
   <widget class="QMenuBar" name="menubar">
    <property name="geometry">
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>1126</width>
+     <width>1296</width>
      <height>19</height>
     </rect>
    </property>

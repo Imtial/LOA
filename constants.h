@@ -18,5 +18,7 @@
 #define OFFSET  10
 // diameter of the circle = DL - 2 * OFFSET
 #define DD  60
+#define LIMIT 4
+#define DEPTH   4
 
 #endif // BOARDBLOCK_H
